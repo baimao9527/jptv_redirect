@@ -40,10 +40,11 @@
 ### 方式一：一键部署 (推荐)
 
 <p align="">
-  <a href="https://vercel.com/new/clone?repository-url=https://github.com/JY4K/jptv_redirect">
+  <a href="https://vercel.com/import/project?template=https://github.com/baimao9527/jptv_redirect">
     <img src="https://vercel.com/button" alt="Deploy with Vercel"/>
   </a>
 </p>
+
 
 1. 点击上方的 **Deploy** 按钮。
 2. 在 Vercel 页面中，创建一个 Git 仓库（Create Git Repository）。
