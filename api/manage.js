@@ -37,6 +37,22 @@ function generateTXT(channels) {
     return txt;
 }
 
+/**
+ * 格式化为特定的 JSON 结构
+ */
+function generateJSON(channels) {
+    return channels.map(g => ({
+        "group": g.group,
+        "id": g.id || g.group.toLowerCase(), // 优先使用数据中的 id
+        "channels": g.channels.map(ch => ({
+            "name": ch.name,
+            // 按照您的要求，将第一个 URL 映射为 id
+            "id": Array.isArray(ch.url) ? ch.url[0] : ch.url,
+            "logo": ch.logo ? (ch.logo.startsWith('http') ? ch.logo : `https://gcore.jsdelivr.net/gh/fanmingming/live/tv/${ch.logo}.png`) : ''
+        }))
+    }));
+}
+
 export default async function handler(req, res) {
     const { url, method, query } = req;
     const token = query.token || '';
@@ -49,6 +65,16 @@ export default async function handler(req, res) {
         channels = getChannels();
     } catch (e) {
         console.error("Data load error:", e);
+    }
+
+    // --- 处理 M3U / TXT / JSON 访问 ---
+    const format = query.format;
+    const isJSONReq = url.includes('ipv6.json') || format === 'json';
+
+    if (isJSONReq) {
+        // JSON 格式通常作为公开 API，可根据需要决定是否增加 isAuth 校验
+        res.setHeader('Content-Type', 'application/json; charset=utf-8');
+        return res.status(200).send(JSON.stringify(generateJSON(channels), null, 4));
     }
 
     // --- 1. 处理 M3U / TXT 纯文本访问 (仅限管理员 Token) ---
